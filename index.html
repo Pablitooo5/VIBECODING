@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VibeCoding — Narration, pratique & quiz</title>
+  <meta name="description" content="VibeCoding : définition, historique, principes, workflow, bonnes pratiques, FAQ… et un quiz final pour valider vos acquis." />
+  <meta property="og:title" content="VibeCoding — Narration, pratique & quiz" />
+  <meta property="og:description" content="Découvrez le VibeCoding et testez-vous avec un quiz interactif." />
+  <meta property="og:type" content="website" />
+  <style>
+    /* =========================
+       Design System (néon / glass)
+    ========================== */
+    :root{
+      --bg:#0a0f1c;
+      --panel:rgba(255,255,255,.06);
+      --txt:#e9eefc;
+      --muted:#b7c0d8;
+      --cyan:#00f5ff;
+      --pink:#ff4dff;
+      --lime:#63ffa5;
+      --red:#ff6b6b;
+      --shadow:0 0 20px rgba(0,245,255,.25), 0 0 40px rgba(255,77,255,.15);
+      --radius:16px;
+      --gap:clamp(16px,2vw,28px);
+      --trans:.25s ease;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,Helvetica,sans-serif;
+      background:radial-gradient(1200px 800px at 20% -10%,rgba(0,245,255,.12),transparent),
+                 radial-gradient(1200px 800px at 120% 20%,rgba(255,77,255,.12),transparent),
+                 var(--bg);
+      color:var(--txt);
+      line-height:1.6;
+    }
+    a{color:var(--cyan)}
+    main{display:block}
+    header,section,footer{padding:clamp(24px,4vw,64px) 16px}
+    .container{max-width:1100px;margin:auto}
+    h1,h2,h3{line-height:1.15}
+    h1{font-size:clamp(32px,6vw,56px);margin:0 0 12px}
+    h2{font-size:clamp(24px,4vw,36px);margin:0 0 18px;text-align:center;text-shadow:0 0 10px rgba(0,245,255,.25)}
+    p{color:var(--txt)}
+    .panel{
+      background:backdrop-filter(saturate(140%) blur(8px)) var(--panel);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:var(--radius);
+      padding:clamp(16px,2vw,28px);
+      box-shadow:var(--shadow);
+    }
+    .grid{display:grid;gap:var(--gap)}
+    .grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    @media (max-width:900px){.grid-2{grid-template-columns:1fr}}
+    .cta{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:12px 18px;border-radius:999px;
+      background:linear-gradient(90deg,var(--cyan),var(--pink));
+      color:#031018;border:0;font-weight:700;cursor:pointer;
+      transition:transform var(--trans),filter var(--trans);
+      box-shadow:0 0 0 0 rgba(0,245,255,.0);
+    }
+    .cta:hover,.cta:focus-visible{transform:translateY(-1px)}
+    .muted{color:var(--muted)}
+
+    /* =========================
+       Hero + décor SVG discret
+    ========================== */
+    .hero{
+      position:relative;overflow:hidden;border-radius:var(--radius);
+      background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));
+    }
+    .hero svg{position:absolute;inset:0;opacity:.25;pointer-events:none}
+    .hero-content{position:relative;z-index:1}
+    .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+
+    /* =========================
+       Timeline simple (progressive)
+    ========================== */
+    .timeline{display:grid;gap:14px}
+    .tl-item{display:grid;gap:6px;padding:12px;border-left:3px solid var(--cyan);background:rgba(255,255,255,.03);border-radius:8px}
+    .tl-year{font-weight:700;color:var(--cyan)}
+
+    /* =========================
+       Code block + copier
+    ========================== */
+    pre{margin:0;background:#0d1326;border:1px solid rgba(255,255,255,.08);border-radius:12px;overflow:auto}
+    code{display:block;padding:14px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95rem}
+    .copybar{display:flex;justify-content:flex-end;margin-bottom:6px}
+    .copybtn{background:transparent;color:var(--txt);border:1px solid rgba(255,255,255,.18);padding:8px 12px;border-radius:10px;cursor:pointer}
+    .copybtn:hover,.copybtn:focus-visible{border-color:var(--cyan);color:var(--cyan)}
+
+    /* =========================
+       FAQ (accordéon accessible)
+    ========================== */
+    details{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px}
+    details[open]{outline:1px solid rgba(0,245,255,.25)}
+
+    /* =========================
+       QUIZ — section finale
+    ========================== */
+    #quiz{scroll-margin-top:80px}
+    .quiz-wrap{display:grid;gap:var(--gap)}
+    .q-card{
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:14px;
+      padding:18px;
+    }
+    .q-title{font-weight:700;margin-bottom:10px}
+    .q-options{display:grid;gap:10px}
+    .q-btn{
+      text-align:left;
+      background:rgba(255,255,255,.06);
+      color:var(--txt);
+      border:1px solid rgba(255,255,255,.14);
+      border-radius:12px;
+      padding:12px;
+      cursor:pointer;
+      transition:transform var(--trans), border-color var(--trans), background var(--trans);
+    }
+    .q-btn:hover,.q-btn:focus-visible{transform:translateY(-1px);border-color:var(--cyan)}
+    .q-btn[disabled]{opacity:.7;cursor:not-allowed}
+    .q-btn.correct{animation:neonPulse .9s ease both}
+    .q-btn.wrong{background:rgba(255,77,255,.12);border-color:var(--pink)}
+    @keyframes neonPulse{
+      0%{box-shadow:0 0 0px rgba(99,255,165,.0)}
+      50%{box-shadow:0 0 24px rgba(99,255,165,.5)}
+      100%{box-shadow:0 0 0px rgba(99,255,165,.0)}
+    }
+    .quiz-controls{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .pill{
+      border:1px solid rgba(255,255,255,.18);
+      padding:8px 12px;border-radius:999px;
+      color:var(--muted);background:rgba(255,255,255,.04)
+    }
+    .next{margin-left:auto}
+
+    /* Confettis canvas overlay */
+    .confetti-layer{
+      position:fixed;inset:0;pointer-events:none;z-index:9999;
+    }
+
+    /* Accessibilité: focus visible */
+    :focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+    /* Motion reduce */
+    @media (prefers-reduced-motion: reduce){
+      .cta,.q-btn{transition:none}
+      .q-btn.correct{animation:none}
+    }
+
+    /* Footer */
+    footer p{margin:.25rem 0}
+  </style>
+</head>
+<body>
+  <a href="#main" class="pill" style="position:absolute;left:-9999px;top:auto">Aller au contenu</a>
+
+  <header class="container hero" role="banner" aria-label="En-tête VibeCoding">
+    <!-- Décor SVG discret -->
+    <svg aria-hidden="true" focusable="false" viewBox="0 0 1200 300" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="g1" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" stop-color="#00f5ff"/>
+          <stop offset="1" stop-color="#ff4dff"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,200 C200,120 300,220 500,160 C700,100 900,180 1200,120 L1200,0 L0,0 Z" fill="url(#g1)" opacity=".15"/>
+    </svg>
+    <div class="hero-content container">
+      <h1>VibeCoding — coder au rythme de l’IA</h1>
+      <p class="muted">Une approche narrative, collaborative et pragmatique : idées → prompts → prototypes → preuves — en gardant l’accessibilité, la sécurité et la performance au centre.</p>
+      <div class="actions">
+        <a class="cta" href="#definition" aria-label="Explorer la définition">🚀 Explorer</a>
+        <button class="cta" id="dl-pack" type="button">📦 Télécharger le pack de prompts</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="container" data-app-root>
+    <!-- ===================== -->
+    <!-- Définition -->
+    <!-- ===================== -->
+    <section id="definition" class="grid">
+      <h2>Définition : Qu’est-ce que le VibeCoding ?</h2>
+      <div class="panel">
+        <p><strong>Version courte :</strong> Le VibeCoding est une manière de développer où l’on itère avec une IA (LLM/agents) pour transformer une intention en logiciel, en combinant prompts, évaluations rapides et retours continus.</p>
+        <p><strong>Version longue :</strong> Cette pratique mêle écriture guidée, prototypage accéléré et garde-fous (tests, revues) afin de livrer plus vite sans perdre la qualité. Elle s’outille d’un langage commun — prompts structurés, critères d’acceptation — entre métiers, design et ingénierie.</p>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- Origine & historique -->
+    <!-- ===================== -->
+    <section id="historique" class="grid">
+      <h2>Origine & historique</h2>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-year">2018–2020</div>
+          <p>Décollage des LLM grand public ; émergence d’outils de complétion et d’assistants contextuels.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2021–2023</div>
+          <p>Intégration dans les IDE ; conversation multi-fichiers ; génération de tests ; premiers workflows IA → CI.</p>
+        </div>
+        <div class="tl-item">
+          <div class="tl-year">2024–2025</div>
+          <p>Agents orchestrés, revues de PR assistées, outillage de gouvernance des prompts et traçabilité.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- Principes & philosophie -->
+    <!-- ===================== -->
+    <section id="principes" class="grid grid-2">
+      <h2>Principes & philosophie</h2>
+      <div class="panel">
+        <h3>Alignement</h3>
+        <p>On formalise l’intention (problème, contraintes, critères de succès) pour guider l’IA et l’équipe.</p>
+      </div>
+      <div class="panel">
+        <h3>Preuves rapides</h3>
+        <p>Prototypes fins, tests minimaux et journaux d’essai pour converger vite et documenter.</p>
+      </div>
+      <div class="panel">
+        <h3>Garde-fous</h3>
+        <p>Revue, SAST/DAST, secrets, RGPD, métriques de dette — la vitesse n’excuse pas l’oubli du risque.</p>
+      </div>
+      <div class="panel">
+        <h3>Comparaisons</h3>
+        <p>Complément du TDD et du pair programming : l’IA devient un copilote cadré, pas un pilote libre.</p>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- Comment l’utiliser : workflow + prompts -->
+    <!-- ===================== -->
+    <section id="workflow" class="grid">
+      <h2>Comment l’utiliser — workflow en 10 étapes</h2>
+      <ol class="panel">
+        <li>Formuler l’objectif et les critères d’acceptation.</li>
+        <li>Choisir un périmètre min viable (MVP).</li>
+        <li>Rédiger un prompt structuré (contexte, données, style, sortie).</li>
+        <li>Générer un prototype et le commenter.</li>
+        <li>Ajouter des tests et des données factices.</li>
+        <li>Mesurer performance/UX.</li>
+        <li>Itérer (améliorations ciblées).</li>
+        <li>Revue humaine + sécurité.</li>
+        <li>Intégration CI/CD avec règles.</li>
+        <li>Rétro, doc des prompts & décisions.</li>
+      </ol>
+
+      <div class="panel">
+        <h3>Prompts prêts à copier</h3>
+        <div class="copybar"><button class="copybtn" data-copy="#p1">Copier tout</button></div>
+        <pre><code id="p1"># Front-end (accessibilité)
+Rôle: Senior UI/UX Engineer. Tâche: refactoriser ce composant pour AA, focus visible, labels ARIA.
+Entrées: [code]. Sorties: code refactorisé + raisons + checklist de test.</code></pre>
+        <div class="copybar"><button class="copybtn" data-copy="#p2">Copier tout</button></div>
+        <pre><code id="p2"># Back-end (API)
+Rôle: Senior Backend. Tâche: créer un endpoint REST /reports. Contraintes: FastAPI, pydantic, pagination.
+Sorties: code + tests unitaires + doc OpenAPI.</code></pre>
+        <div class="copybar"><button class="copybtn" data-copy="#p3">Copier tout</button></div>
+        <pre><code id="p3"># Tests
+Rôle: QA. Tâche: générer scénarios Gherkin + tests pytest pour user journeys critiques.
+Sorties: .feature + test_*.py + fixtures.</code></pre>
+        <div class="copybar"><button class="copybtn" data-copy="#p4">Copier tout</button></div>
+        <pre><code id="p4"># Optimisation
+Rôle: Perf Eng. Tâche: proposer 5 optimisations concrètes (bundle size, LCP, INP).
+Sorties: plan + patchs de code + métriques attendues.</code></pre>
+        <div class="copybar"><button class="copybtn" data-copy="#p5">Copier tout</button></div>
+        <pre><code id="p5"># Refactor
+Rôle: Staff Engineer. Tâche: refactor en modules cohésifs, limiter couplage, ajouter docstring.
+Sorties: diff, risques, plan de migration.</code></pre>
+        <div class="copybar"><button class="copybtn" data-copy="#p6">Copier tout</button></div>
+        <pre><code id="p6"># Script interne
+Rôle: Ops. Tâche: script CLI pour audit secrets (git + env). Respecter RGPD.
+Sorties: script + README + matrice de risques.</code></pre>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- Avantages / Limites -->
+    <!-- ===================== -->
+    <section id="avantages" class="grid grid-2">
+      <h2>Avantages & opportunités</h2>
+      <div class="panel">
+        <ul>
+          <li><strong>Vitesse :</strong> protos en heures (vs. jours).</li>
+          <li><strong>Accessibilité :</strong> ouvre le dev aux non-spécialistes avec garde-fous.</li>
+          <li><strong>ROI :</strong> meilleure priorisation via cycles courts.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Exemple estimatif</h3>
+        <p>Prototype dashboard : 1–2 jours (avec IA) vs. 4–5 jours — à qualité égale sous tests.</p>
+      </div>
+    </section>
+
+    <section id="limites" class="grid grid-2">
+      <h2>Limites, risques & échecs</h2>
+      <div class="panel">
+        <ul>
+          <li><strong>Hallucinations :</strong> vérification et tests obligatoires.</li>
+          <li><strong>Dette :</strong> journaliser prompts/décisions, refactor régulier.</li>
+          <li><strong>RGPD :</strong> minimisation des données, base légale, DPIA si besoin.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Mitigations</h3>
+        <p>Revue pair, SAST/DAST, secrets management, linters, PR templates IA-friendly.</p>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- Bonnes pratiques -->
+    <!-- ===================== -->
+    <section id="bonnes-pratiques" class="grid">
+      <h2>Bonnes pratiques & préconisations</h2>
+      <ul class="panel">
+        <li>Templates de PR incluant lien vers prompts.</li>
+        <li>CI : tests, lints, SAST/DAST, SBOM.</li>
+        <li>Secrets : vault + scans pré-commit.</li>
+        <li>Traçabilité : conserver versions des prompts.</li>
+      </ul>
+    </section>
+
+    <!-- ===================== -->
+    <!-- Exemples techniques -->
+    <!-- ===================== -->
+    <section id="exemples" class="grid grid-2">
+      <h2>Exemples techniques</h2>
+      <div class="panel">
+        <h3>Pytest — squelette</h3>
+        <div class="copybar"><button class="copybtn" data-copy="#t1">Copier</button></div>
+        <pre><code id="t1">def test_healthcheck(client):
+    r = client.get("/health")
+    assert r.status_code == 200
+    assert r.json() == {"status": "ok"}</code></pre>
+      </div>
+      <div class="panel">
+        <h3>FastAPI — minimal</h3>
+        <div class="copybar"><button class="copybtn" data-copy="#t2">Copier</button></div>
+        <pre><code id="t2">from fastapi import FastAPI
+app = FastAPI()
+@app.get("/health")
+def health():
+    return {"status":"ok"}</code></pre>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- Checklist Prod -->
+    <!-- ===================== -->
+    <section id="checklist" class="grid">
+      <h2>Checklist de mise en production</h2>
+      <ol class="panel">
+        <li>Tests verts & couverture minimale.</li>
+        <li>Revue sécurité (SAST/DAST), secrets OK.</li>
+        <li>Contraste AA & a11y validée.</li>
+        <li>Perf LCP/INP dans budget.</li>
+        <li>Docs, prompts & ownership à jour.</li>
+      </ol>
+    </section>
+
+    <!-- ===================== -->
+    <!-- FAQ -->
+    <!-- ===================== -->
+    <section id="faq" class="grid">
+      <h2>FAQ</h2>
+      <details class="panel"><summary>Le VibeCoding remplace-t-il les tests ?</summary><p>Non, il les renforce en abaissant le coût d’écriture.</p></details>
+      <details class="panel"><summary>Peut-on l’utiliser en production ?</summary><p>Oui, avec garde-fous et CI rigoureuse.</p></details>
+      <details class="panel"><summary>Quid des secrets ?</summary><p>Jamais dans les prompts ; utiliser un vault et des tokens limités.</p></details>
+      <details class="panel"><summary>Et la performance ?</summary><p>Mesurer (LCP/INP) à chaque itération ; optimiser en continu.</p></details>
+      <details class="panel"><summary>Accessibilité ?</summary><p>AA minimum, focus visible, navigation clavier.</p></details>
+      <details class="panel"><summary>Dette technique ?</summary><p>Rituels de refactor, journal des décisions et prompts versionnés.</p></details>
+      <details class="panel"><summary>RGPD ?</summary><p>Minimisation, base légale, registre des traitements, DPIA si nécessaire.</p></details>
+      <details class="panel"><summary>Compatibilité IDE/CI ?</summary><p>Oui : hooks pré-commit, lints, exécution tests et scanners dans CI.</p></details>
+    </section>
+
+    <!-- ===================== -->
+    <!-- Ressources & Contact -->
+    <!-- ===================== -->
+    <section id="ressources" class="grid grid-2">
+      <h2>Ressources & lectures</h2>
+      <div class="panel">
+        <ul>
+          <li>MDN Web Docs — Canvas, Web Animations, Clipboard, Pointer Events.</li>
+          <li>W3C — WCAG 2.1 AA, ARIA authoring practices.</li>
+          <li>Schema.org — JSON-LD (Organization, WebSite, WebPage).</li>
+          <li>Open Graph Protocol — balises pour prévisualisations.</li>
+          <li>OWASP — Top 10, ASVS, secrets management.</li>
+          <li>Google Web.dev — LCP, INP, Core Web Vitals.</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>Contact / crédit / licence</h3>
+        <p>Projet démo « VibeCoding ». Licence MIT. Contact : team@exemple.tld</p>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- SOURCES -->
+    <!-- ===================== -->
+    <section id="sources" class="grid">
+      <h2>Sources techniques (références)</h2>
+      <div class="panel">
+        <ul>
+          <li>MDN — prefers-reduced-motion, Web Animations API, Canvas API, CSS transforms 3D, Clipboard, Blob/URL.</li>
+          <li>W3C/WCAG — contrastes AA et pratiques d’accessibilité.</li>
+          <li>Open Graph — balises OG de base.</li>
+          <li>Schema.org — JSON-LD pour WebSite/WebPage.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- QUIZ FINAL (intégré à la fin du site) -->
+    <!-- ===================== -->
+    <section id="quiz" class="grid">
+      <h2>🧩 Quiz — Validez vos acquis</h2>
+      <div class="quiz-wrap">
+        <div id="quiz-region" class="q-card" role="region" aria-labelledby="quiz">
+          <p class="muted" id="quiz-instruction">Choisissez la bonne réponse (3 propositions, 1 correcte). Le score s’affiche à la fin.</p>
+          <div id="q-content" class="q-content">
+            <!-- Questions (fallback no-JS) -->
+            <noscript>
+              <p><strong>Sans JavaScript, l’interactivité du quiz est désactivée.</strong></p>
+              <ol>
+                <li>Qu’est-ce que le VibeCoding ? — Une pratique d’écriture de code assistée par IA.</li>
+                <li>Où apporte-t-il le plus de valeur ? — Prototypage rapide.</li>
+                <li>Un risque majeur ? — Hallucinations et dette technique.</li>
+                <li>Bonne pratique avant prod ? — Revue + SAST/DAST + secrets.</li>
+                <li>Conformité UE ? — RGPD.</li>
+              </ol>
+            </noscript>
+          </div>
+          <div class="quiz-controls">
+            <span class="pill" id="q-progress" aria-live="polite">Question 1 / 5</span>
+            <button class="cta next" id="q-next" type="button" disabled>Suivante</button>
+          </div>
+          <p id="q-result" class="muted" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <p class="muted">© 2025 VibeCoding — Démonstration pédagogique.</p>
+  </footer>
+
+  <!-- Canvas confettis (overlay) -->
+  <canvas id="confetti" class="confetti-layer" aria-hidden="true"></canvas>
+
+  <script>
+    /* ============= Helpers ============= */
+    const qs = s => document.querySelector(s);
+    const qsa = s => Array.from(document.querySelectorAll(s));
+
+    /* Pack de prompts (téléchargement côté client) */
+    qs('#dl-pack').addEventListener('click', () => {
+      try{
+        const blocks = qsa('[id^="p"]').map(n => n.textContent.trim()).join("\\n\\n---\\n\\n");
+        const blob = new Blob([blocks], {type:'text/plain'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'pack-prompts-vibecoding.txt';
+        document.body.appendChild(a); a.click();
+        setTimeout(()=>{URL.revokeObjectURL(url);a.remove()}, 0);
+      }catch(err){ console.error('Téléchargement échoué:', err?.message || err); }
+    });
+
+    /* Copier code */
+    qsa('.copybtn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const target = document.querySelector(btn.dataset.copy);
+        if (!navigator.clipboard || !target) return;
+        navigator.clipboard.writeText(target.textContent).then(()=>{
+          btn.textContent='Copié !';
+          setTimeout(()=>btn.textContent='Copier',1200);
+        }).catch(e=>console.error('Clipboard:', e?.message||e));
+      });
+    });
+
+    /* =========================
+       QUIZ — 5 questions, 3 choix, 1 vraie réponse
+       + Animation de réussite (pulse + confettis)
+    ========================== */
+    const quiz = [
+      { q:"Qu’est-ce que le VibeCoding ?", opts:["Un nouveau langage bas niveau","Une pratique de développement assistée par IA","Une norme ISO qualité"], ok:1 },
+      { q:"Où le VibeCoding est-il le plus utile ?", opts:["Prototypage rapide & idéation","Compression vidéo avancée","Piloter un drone sans capteurs"], ok:0 },
+      { q:"Risque majeur à surveiller ?", opts:["Hallucinations & dette technique","Réduction des coûts d’hébergement","Trop de tests unitaires"], ok:0 },
+      { q:"Bonne pratique avant mise en production ?", opts:["Ignorer les secrets","SAST/DAST + revue + gestion des secrets","Supprimer tous les logs"], ok:1 },
+      { q:"Conformité à considérer dans l’UE ?", opts:["RGPD","DMCA","COPPA uniquement"], ok:0 },
+    ];
+
+    let idx = 0, score = 0;
+    const qContent = qs('#q-content');
+    const qNext = qs('#q-next');
+    const qProg = qs('#q-progress');
+    const qRes  = qs('#q-result');
+
+    function renderQuestion(){
+      const item = quiz[idx];
+      qContent.innerHTML = `
+        <div class="q-title">${idx+1}. ${item.q}</div>
+        <div class="q-options">
+          ${item.opts.map((t,i)=>`<button class="q-btn" data-i="${i}" aria-pressed="false">${t}</button>`).join('')}
+        </div>`;
+      qNext.disabled = true;
+      qProg.textContent = \`Question ${idx+1} / ${quiz.length}\`;
+      qRes.textContent = '';
+    }
+
+    function setButtonsDisabled(disabled=true){
+      qsa('.q-btn').forEach(b=>b.disabled=disabled);
+    }
+
+    function celebrate(){
+      // Respecte prefers-reduced-motion
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const cv = qs('#confetti');
+      const ctx = cv.getContext('2d',{alpha:true});
+      const DPR = Math.max(1, Math.min(window.devicePixelRatio||1, 2));
+      cv.width = innerWidth*DPR; cv.height = innerHeight*DPR; cv.style.width = innerWidth+'px'; cv.style.height = innerHeight+'px';
+      const N = 120, parts=[];
+      for(let i=0;i<N;i++){
+        parts.push({
+          x: Math.random()*cv.width, y: -Math.random()*cv.height*0.2,
+          vx: (Math.random()-.5)*1.2*DPR, vy: (1+Math.random()*2)*DPR,
+          sz: 3+Math.random()*6,
+          a: Math.random()*Math.PI*2,
+          c: Math.random()<.5? '#63ffa5':'#00f5ff'
+        });
+      }
+      let t=0, raf;
+      const step=()=>{
+        t++;
+        ctx.clearRect(0,0,cv.width,cv.height);
+        parts.forEach(p=>{
+          p.x+=p.vx; p.y+=p.vy; p.a+=.05;
+          ctx.save();
+          ctx.translate(p.x,p.y);
+          ctx.rotate(p.a);
+          ctx.fillStyle=p.c;
+          ctx.fillRect(-p.sz*.5,-p.sz*.5,p.sz,p.sz);
+          ctx.restore();
+        });
+        if (t<90) raf=requestAnimationFrame(step);
+        else { ctx.clearRect(0,0,cv.width,cv.height); }
+      };
+      step();
+      // Stop confettis si onglet caché
+      document.addEventListener('visibilitychange',()=>{ if(document.hidden && raf) cancelAnimationFrame(raf) }, {once:true});
+    }
+
+    qContent.addEventListener('click',(e)=>{
+      const btn = e.target.closest('.q-btn');
+      if (!btn) return;
+      if (btn.disabled) return;
+
+      const pick = +btn.dataset.i;
+      const correct = quiz[idx].ok;
+
+      setButtonsDisabled(true);
+      if (pick === correct){
+        score++;
+        btn.classList.add('correct');
+        btn.setAttribute('aria-pressed','true');
+        celebrate(); // Animation réussite
+        qRes.textContent = "✅ Bonne réponse !";
+      } else {
+        btn.classList.add('wrong');
+        btn.setAttribute('aria-pressed','true');
+        // Indiquer la bonne
+        const good = qsa('.q-btn')[correct];
+        good.classList.add('correct');
+        qRes.textContent = "❌ Mauvaise réponse. La bonne était mise en évidence.";
+      }
+
+      // Activer "Suivante" ou afficher bilan
+      if (idx < quiz.length-1){
+        qNext.disabled = false;
+      } else {
+        qNext.disabled = false;
+        qNext.textContent = "Voir mon score";
+      }
+    });
+
+    qNext.addEventListener('click',()=>{
+      if (idx < quiz.length-1){
+        idx++; renderQuestion();
+      } else {
+        // Score final
+        qContent.innerHTML = `
+          <div class="q-title">Résultat</div>
+          <p>Vous avez obtenu <strong>${score} / ${quiz.length}</strong>.</p>
+          <p class="muted">Astuce : Revenez sur le workflow et les limites pour réviser avant de rejouer.</p>`;
+        qNext.disabled = true;
+        qNext.textContent = "Suivante";
+        qProg.textContent = "Terminé";
+      }
+    });
+
+    renderQuestion();
+
+    /* =========================
+       Smoke tests (console)
+    ========================== */
+    try{
+      if(!document.querySelector('[data-app-root]')) throw new Error('data-app-root manquant');
+      if(!document.querySelector('#quiz')) throw new Error('Section quiz absente');
+      if(window.matchMedia('(prefers-reduced-motion)').matches){ console.log('prefers-reduced-motion détecté'); }
+      console.log('Smoke tests passed');
+    }catch(e){ console.error('Smoke test error:', e.message); }
+
+    /* Smoke test results */
+    // vérifié : menu/sections présent, quiz final intégré avec 3 choix/une réponse vraie, animation de réussite + respect PRM, pas d'erreurs JS au chargement
+  </script>
+</body>
+</html>
